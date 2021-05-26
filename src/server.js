@@ -16,21 +16,26 @@ import {
 
 const server = express();
 const port = process.env.PORT || 3001;
+const whiteList = [process.env.FRONTEND_DEV_URL, process.env.FRONTEND_CLOUD_URL]
 
 const publicFolder = join(dirname(fileURLToPath(import.meta.url)), "../public/")
 
 server.use(express.static(publicFolder));
 // If I do not specify this line of code BEFORE the routes, all the request bodies are going to be undefined
-
-server.use(cors({
+const corsOptions = {
   origin: function (origin, next) {
-    if (orgin === "http://localhost:3000") {
+    console.log('This is the origin', origin)
+    if (whiteList.indexOf(origin) !== -1) {
+      //origin allowed
       next(null, true)
     } else {
-      next(new Error('CORS PROBLEM: ORIGIN NOT SUPPORTED' + origin))
+      next(new Error('CORS PROBLEM: ORIGIN NOT SUPPORTED'))
     }
+    //origin notallowed  
   }
-}));
+}
+
+server.use(cors(corsOptions));
 
 server.use(express.json());
 
