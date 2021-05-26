@@ -2,7 +2,7 @@
     {
         "category": "ARTICLE CATEGORY",
         "title": "ARTICLE TITLE",
-        "cover": "http://localhost:3001/img/blogPosts/cq3ojfwkoxitx24.jpg",
+        "cover": "http://localhost:3501/img/blogPosts/cq3ojfwkoxitx24.jpg",
         "readTime": { "value": 2, "unit": "minute" },
         "author": { "name": "NAME", "avatar": "AUTHOR AVATAR LINK" },
         "content": "HTML",
@@ -20,7 +20,7 @@
         "_id": "cq3odpskp4pm4iv",
         "createdAt": "2021-05-26T00:08:47.719Z",
         "updatedAt": "2021-05-26T00:08:47.719Z",
-        "cover": "http://localhost:3001/img/blogPosts/cq3odpskp4pm4iv.jpg"
+        "cover": "http://localhost:3501/img/blogPosts/cq3odpskp4pm4iv.jpg"
     },
     {
         "_id": 1,
