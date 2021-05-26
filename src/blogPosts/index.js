@@ -11,6 +11,8 @@ import {
   checkSearchSchema,
 } from "./validation.js";
 import multer from "multer";
+import { pipeline } from "stream"
+import { generatePDFStream } from "../lib/generatePDFStream.js"
 
 
 const blogPostRouter = express.Router();
@@ -135,6 +137,32 @@ blogPostRouter.post("/:id/uploadCover", multer().single("uploadCover"), async (r
   }
 }
 );
+
+blogPostRouter.get('/:id/loadPdf', async (req, res, next) => {
+
+  try {
+    let blogPosts = await getBlogPosts();
+    const filtered = blogPosts.filter((blog) => blog._id === req.params.id);
+
+    if (filtered.length > 0) {
+
+      const Content = filtered[0].content
+      const source = generatePDFStream(Content)
+      const destination = res
+      res.setHeader("Content-Disposition", `attachment; filename=${filtered[0].author.name}.pdf`)
+      pipeline(source, res, err => next(err))
+
+    } else {
+      const error = new Error("Blog post validation is failed");
+      error.status = 400;
+      next(error);
+    }
+
+  } catch (error) {
+    next(error);
+  }
+})
+
 export default blogPostRouter;
 
 

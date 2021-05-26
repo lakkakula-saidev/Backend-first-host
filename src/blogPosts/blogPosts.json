@@ -4,7 +4,7 @@
         "title": "ARTICLE TITLE",
         "cover": "http://localhost:3001/img/blogPosts/cq3ojfwkoxitx24.jpg",
         "readTime": { "value": 2, "unit": "minute" },
-        "author": { "name": "AUTHOR AVATAR NAME", "avatar": "AUTHOR AVATAR LINK" },
+        "author": { "name": "NAME", "avatar": "AUTHOR AVATAR LINK" },
         "content": "HTML",
         "_id": "cq3ojfwkoxitx24",
         "createdAt": "2021-05-20T23:24:30.747Z",

@@ -15,7 +15,7 @@ import {
 } from "./errorHandlers.js";
 
 const server = express();
-const port = process.env.PORT || 3001;
+const port = /* process.env.PORT || */ 3001;
 const whiteList = [process.env.FRONTEND_DEV_URL, process.env.FRONTEND_CLOUD_URL]
 
 const publicFolder = join(dirname(fileURLToPath(import.meta.url)), "../public/")
