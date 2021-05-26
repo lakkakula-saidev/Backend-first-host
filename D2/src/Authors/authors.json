@@ -1,0 +1,11 @@
+[
+    {
+        "name": "strive",
+        "surname": "school",
+        "email": "strive.school@email.com",
+        "date of birth": "29-10-1994",
+        "_id": "cq3okbkkox04g0e",
+        "createdAt": "2021-05-20T14:40:49.165Z",
+        "cover": "http://localhost:3001/img/authors/cq3okbkkox04g0e.jpg"
+    }
+]
