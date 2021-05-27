@@ -11,7 +11,7 @@ import {
   checkSearchSchema,
 } from "./validation.js";
 import multer from "multer";
-import { pipeline } from "stream"
+import { pipeline, Transform } from "stream"
 import { generatePDFStream } from "../lib/generatePDFStream.js"
 
 
@@ -142,11 +142,11 @@ blogPostRouter.get('/:id/loadPdf', async (req, res, next) => {
 
   try {
     let blogPosts = await getBlogPosts();
-    const filtered = blogPosts.filter((blog) => blog._id === req.params.id);
+    const filtered = blogPosts.filter((blog) => blog._id.toString() === req.params.id);
 
     if (filtered.length > 0) {
 
-      const Content = filtered[0].content
+      const Content = filtered[0]
       const source = generatePDFStream(Content)
       const destination = res
       res.setHeader("Content-Disposition", `attachment; filename=${filtered[0].author.name}.pdf`)
@@ -160,6 +160,27 @@ blogPostRouter.get('/:id/loadPdf', async (req, res, next) => {
 
   } catch (error) {
     next(error);
+  }
+})
+
+blogPostRouter.get('/authorCSV', async (req, res, next) => {
+
+  try {
+    const fields = ['author']
+    const options = { fields }
+    const json2csv = new Transform(options)
+    res.header("Content-Disposition", `attachment; filename=authors.csv`)
+    const csvStream = await getBlogPosts()
+
+    pipeline(csvStream, json2csv, res, err => {
+      if (err) {
+        next(err)
+      }
+    })
+
+  } catch (error) {
+
+    next(error)
   }
 })
 

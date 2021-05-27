@@ -7,6 +7,7 @@ import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import blogPostRoutes from "./blogPosts/index.js";
 import authorRoutes from "./Authors/index.js";
+import userMail from "./Users/index.js";
 import {
   badRequestErrorHandler,
   notFoundErrorHandler,
@@ -56,6 +57,7 @@ const logger = async (req, res, next) => {
 server.use(logger)
 server.use("/authors", authorRoutes); // /authors will be the prefix for all the endpoints contained in the authors Router
 server.use("/blogPosts", blogPostRoutes);
+server.use('/mail', userMail)
 
 server.use(badRequestErrorHandler);
 server.use(notFoundErrorHandler);
