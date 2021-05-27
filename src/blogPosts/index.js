@@ -11,8 +11,10 @@ import {
   checkSearchSchema,
 } from "./validation.js";
 import multer from "multer";
-import { pipeline, Transform } from "stream"
+import { pipeline } from "stream"
 import { generatePDFStream } from "../lib/generatePDFStream.js"
+
+import { Transform } from "json2csv"
 
 
 const blogPostRouter = express.Router();
@@ -163,26 +165,7 @@ blogPostRouter.get('/:id/loadPdf', async (req, res, next) => {
   }
 })
 
-blogPostRouter.get('/authorCSV', async (req, res, next) => {
 
-  try {
-    const fields = ['author']
-    const options = { fields }
-    const json2csv = new Transform(options)
-    res.header("Content-Disposition", `attachment; filename=authors.csv`)
-    const csvStream = await getBlogPosts()
-
-    pipeline(csvStream, json2csv, res, err => {
-      if (err) {
-        next(err)
-      }
-    })
-
-  } catch (error) {
-
-    next(error)
-  }
-})
 
 export default blogPostRouter;
 

@@ -82,27 +82,5 @@
         "createdAt": "2021-05-27T12:04:28.622Z",
         "updatedAt": "2021-05-27T12:04:28.622Z",
         "cover": "http://localhost:3501/img/blogPosts/cq3o5lckp6umclq.jpg"
-    },
-    {
-        "category": "Category2",
-        "content": "dfsdfsdf",
-        "title": "dfsdf",
-        "readTime": { "value": "15", "unit": "minute" },
-        "author": { "name": "dfsdfsdf", "avatar": "dfsdfsdf" },
-        "_id": "cq3o5lckp6urefy",
-        "createdAt": "2021-05-27T12:08:24.286Z",
-        "updatedAt": "2021-05-27T12:08:24.286Z",
-        "cover": "http://localhost:3501/img/blogPosts/cq3o5lckp6urefy.jpg"
-    },
-    {
-        "category": "Category2",
-        "content": "dfsdfsd",
-        "title": "dsdfsd",
-        "readTime": { "value": "16", "unit": "minute" },
-        "author": { "name": "dfsdfsdf", "avatar": "fsdfsdf" },
-        "_id": "cq3oixkkp6v0pxu",
-        "createdAt": "2021-05-27T12:15:39.090Z",
-        "updatedAt": "2021-05-27T12:15:39.090Z",
-        "cover": "http://localhost:3501/img/blogPosts/cq3oixkkp6v0pxu.jpg"
     }
 ]

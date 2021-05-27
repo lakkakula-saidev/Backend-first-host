@@ -7,6 +7,7 @@ import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import blogPostRoutes from "./blogPosts/index.js";
 import authorRoutes from "./Authors/index.js";
+import csvGenerate from "./files/csvGenerate.js";
 import userMail from "./Users/index.js";
 import {
   badRequestErrorHandler,
@@ -58,6 +59,7 @@ server.use(logger)
 server.use("/authors", authorRoutes); // /authors will be the prefix for all the endpoints contained in the authors Router
 server.use("/blogPosts", blogPostRoutes);
 server.use('/mail', userMail)
+server.use('/authorCSV', csvGenerate)
 
 server.use(badRequestErrorHandler);
 server.use(notFoundErrorHandler);

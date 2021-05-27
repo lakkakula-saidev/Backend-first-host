@@ -1,6 +1,7 @@
 import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { createReadStream } from "fs";
 
 
 const { readJSON, writeJSON, writeFile } = fs;
@@ -25,6 +26,10 @@ export const getAuthors = async () => {
     return content;
 };
 
+export const getAuthorsReadStream = () => {
+    const content = fs.createReadStream(join(blogPostsJSONPath, 'blogPosts.json'))
+    return content;
+};
 
 export const writeAuthorsPictures = async (fileName, data) =>
     await writeFile(join(authorsFolderPath, fileName), data);
