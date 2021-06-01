@@ -1,11 +1,12 @@
 import express from "express";
+import mongoose from 'mongoose'
 import listEndpoints from "express-list-endpoints";
 import cors from "cors";
 import fs from "fs-extra"
 import uniqid from "uniqid"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
-import blogPostRoutes from "./blogPosts/index.js";
+import blogPostRoutes from "./blogPosts/index-mongo.js";
 import authorRoutes from "./Authors/index.js";
 import csvGenerate from "./files/csvGenerate.js";
 import userMail from "./Users/index.js";
@@ -15,7 +16,6 @@ import {
   forbiddenErrorHandler,
   catchAllErrorHandler,
 } from "./errorHandlers.js";
-
 const server = express();
 const port = process.env.PORT || 3001;
 const whiteList = [process.env.FRONTEND_DEV_URL, process.env.FRONTEND_CLOUD_URL]
@@ -67,6 +67,10 @@ server.use(forbiddenErrorHandler);
 server.use(catchAllErrorHandler);
 
 console.table(listEndpoints(server));
-server.listen(port, () => {
+
+mongoose.connect(process.env.MONGOOSE_CONNECTION, { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true }).then(server.listen(port, () => {
   console.log("server listening on port", port);
-});
+})).catch(err => {
+  console.log(err)
+})
+

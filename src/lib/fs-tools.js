@@ -1,7 +1,6 @@
 import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { createReadStream } from "fs";
 
 
 const { readJSON, writeJSON, writeFile } = fs;
@@ -15,6 +14,7 @@ const blogsFolderPath = join(
 const authorsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "../Authors");
 
 const blogPostsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "../blogPosts");
+const mailAttachmentPath = join(dirname(fileURLToPath(import.meta.url)), "../")
 
 
 export const getBlogPosts = async () => {
@@ -81,12 +81,13 @@ export const setCoverUrl = async (coverURL, id) => {
         return post
     })
 
-
-    /*  })
-    /*  coverImgPost.cover = coverURL */
-
-    /*  const remainingPosts = await getBlogPosts().find(post => post._id !== id)
-     await remainingPosts.push(coverImgPost) */
     await writeJSON(join(blogPostsJSONPath, 'blogPosts.json'), singlePost);
+}
 
+// ************** Set mail attachments *************************
+
+export const emailAttachment = () => {
+    const content = readFile(join(mailAttachmentPath, 'authors.csv'))
+
+    return content
 }

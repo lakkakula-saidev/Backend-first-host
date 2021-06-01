@@ -3,7 +3,6 @@ import fs from "fs";
 import { dirname, join, extname } from "path";
 import { fileURLToPath } from "url";
 import uniqid from "uniqid";
-import { validationResult } from "express-validator";
 import { writeBlogPostCover, blogsCoverPath, setCoverUrl, getBlogPosts } from '../lib/fs-tools.js'
 import {
   checkBlogPostSchema,
@@ -111,12 +110,12 @@ blogPostRouter.put(
   }
 );
 
-blogPostRouter.delete("/:id", (req, res) => {
-  const remainingBlogPosts = getBlogPosts().filter(
+blogPostRouter.delete("/:id", async (req, res) => {
+  const remainingBlogPosts = await getBlogPosts().filter(
     (item) => item._id !== req.params.id
   );
 
-  editedBlogPosts(remainingBlogPosts);
+  await editedBlogPosts(remainingBlogPosts);
   res.status(204).send();
 });
 
@@ -167,6 +166,6 @@ blogPostRouter.get('/:id/loadPdf', async (req, res, next) => {
 
 
 
-export default blogPostRouter;
+/* export default blogPostRouter; */
 
 
