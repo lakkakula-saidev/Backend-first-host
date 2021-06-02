@@ -5,6 +5,8 @@ import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import multer from 'multer'
 import { checkBlogPostSchema, checkValidatonResult, checkSearchSchema } from "./validation.js";
+import { generatePDFStream } from '../lib/generatePDFStream.js'
+import { pipeline } from 'stream'
 
 const blogPostRouter = express.Router()
 
@@ -83,23 +85,124 @@ blogPostRouter.delete('/:id', async (req, res, next) => {
 blogPostRouter.post("/:id/uploadCover", upload, async (req, res, next) => {
 
     try {
-        const idOfTheBlogPost = req.params.id;
 
-        /* await writeBlogPostCover(`${idOfTheBlogPost}${extname(req.file.originalname)}`, req.file.buffer)
-
-        const CoverPath = `${req.protocol}://${req.get("host")}/img/blogPosts/${req.params.id}${extname(req.file.originalname)}` */
         console.log('i am changing picture from front')
-        const CoverPath = req.file.path
-        await setCoverUrl(CoverPath, req.params.id)
 
-        res.send()
+        const updatedBlog = await Blogschema.findByIdAndUpdate(req.params.id, { cover: req.file.path }, { runValidators: true, new: true })
+        if (updatedBlog) {
+            res.send(updatedBlog)
+        } else {
+            next(createError(404, `Blog with _id:${req.params.id} not found`))
+        }
+
     } catch (error) {
-
-
+        console.log(error)
         next(error)
     }
 }
 );
+
+blogPostRouter.get('/:id/loadPdf', async (req, res, next) => {
+
+    try {
+        const blog = await Blogschema.findById(req.params.id)
+
+        if (blog) {
+
+            const source = await generatePDFStream(blog)
+            const destination = res
+            res.setHeader("Content-Disposition", `attachment; filename=${blog.author.name}.pdf`)
+            pipeline(source, res, err => next(err))
+
+        } else {
+            const error = new Error("Blog post validation is failed");
+            error.status = 400;
+            next(error);
+        }
+
+    } catch (error) {
+        next(error);
+    }
+})
+
+
+blogPostRouter.get('/:id/comments', async (req, res, next) => {
+    try {
+        const comments = await Blogschema.findById(req.params.id, { comments: 1 })
+        if (comments) {
+            res.send(comments)
+        } else {
+            res.send('No comments available')
+        }
+    } catch (error) {
+        next(error)
+    }
+
+})
+blogPostRouter.get('/:id/comments/:commentId', async (req, res, next) => {
+    try {
+        const comment = await Blogschema.findOne({ _id: req.params.id }, { comments: { $elemMatch: { _id: req.params.commentId } } })
+        if (comment) {
+            res.send(comment)
+        } else {
+            const error = new Error(`No comment with Id:${this.params.commentId} found`);
+            error.status = 404;
+            next(error);
+        }
+    } catch (error) {
+        next(error)
+    }
+
+})
+blogPostRouter.post('/:id', async (req, res, next) => {
+
+    try {
+
+        const updatedComments = await Blogschema.findByIdAndUpdate(req.params.id, { $push: { comments: req.body }, }, { runValidators: true, new: true })
+        if (updatedComments) {
+            res.send(updatedComments)
+        } else {
+            next(createError(404, `Blogpost with ${req.params.id} not found`))
+        }
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+
+})
+blogPostRouter.put('/:id/comments/:commentId', async (req, res, next) => {
+    try {
+        const comment = await Blogschema.findOneAndUpdate(
+            { _id: req.params.id, 'comments._id': req.params.commentId },
+            { $set: { "comments.$": req.body } },
+            { runValidators: true, new: true })
+
+        if (comment) {
+            res.send(comment)
+        } else {
+            next(createError(404, `Comment with ID:${req.params.commentId} not found`))
+        }
+    } catch (error) {
+        next(error)
+    }
+
+})
+blogPostRouter.delete('/:id/comments/:commentId', async (req, res, next) => {
+    try {
+        const comment = await Blogschema.findByIdAndUpdate(req.params.id, { $pull: { comments: { _id: req.params.commentId } } },
+            {
+                new: true,
+            })
+        if (comment) {
+            res.send(comment)
+        } else {
+            next(createError(404, `Comment with Id: ${req.params.commentId} not found`))
+        }
+    } catch (error) {
+        next(error)
+    }
+
+})
 
 
 export default blogPostRouter

@@ -15,6 +15,10 @@ const BlogSchema = new Schema({
         type: String,
         required: true,
     },
+    cover: {
+        type: String,
+
+    },
     "author.name": {
         type: String,
         required: true,
@@ -32,7 +36,17 @@ const BlogSchema = new Schema({
     "readTime.unit": {
         type: String,
         required: true,
-    }
+    },
+    comments: [
+        {
+            author: {
+                type: String,
+            },
+            content: {
+                type: String,
+            }, date: Date,
+        }
+    ]
 },
     { timestamps: true }
 
