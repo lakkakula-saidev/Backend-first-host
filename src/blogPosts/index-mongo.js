@@ -7,6 +7,7 @@ import multer from 'multer'
 import { checkBlogPostSchema, checkValidatonResult, checkSearchSchema } from "./validation.js";
 import { generatePDFStream } from '../lib/generatePDFStream.js'
 import { pipeline } from 'stream'
+import {basicAuthMiddleware} from '../Auth/basic.js'
 
 const blogPostRouter = express.Router()
 
@@ -21,7 +22,7 @@ const upload = multer({ storage: cloudinaryStorage }).single('uploadCover')
 
 
 
-blogPostRouter.get('/', async (req, res, next) => {
+blogPostRouter.get('/', basicAuthMiddleware, async (req, res, next) => {
     try {
         const blogs = await Blogschema.find()
         res.send(blogs)
@@ -31,7 +32,7 @@ blogPostRouter.get('/', async (req, res, next) => {
     }
 })
 
-blogPostRouter.get('/:id', async (req, res, next) => {
+blogPostRouter.get('/:id', basicAuthMiddleware, async (req, res, next) => {
     try {
         const id = req.params.id
         const blog = await Blogschema.findById(id)
@@ -42,7 +43,7 @@ blogPostRouter.get('/:id', async (req, res, next) => {
     }
 })
 
-blogPostRouter.post('/', checkBlogPostSchema,
+blogPostRouter.post('/',basicAuthMiddleware, checkBlogPostSchema,
     checkValidatonResult, async (req, res, next) => {
         try {
             const newBlog = new Blogschema(req.body)
@@ -54,7 +55,7 @@ blogPostRouter.post('/', checkBlogPostSchema,
         }
     })
 
-blogPostRouter.put('/:id', async (req, res, next) => {
+blogPostRouter.put('/:id',basicAuthMiddleware, async (req, res, next) => {
     try {
         const blog = await Blogschema.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true })
         if (blog) {
@@ -68,7 +69,7 @@ blogPostRouter.put('/:id', async (req, res, next) => {
     }
 })
 
-blogPostRouter.delete('/:id', async (req, res, next) => {
+blogPostRouter.delete('/:id', basicAuthMiddleware,  async (req, res, next) => {
     try {
         const blog = await Blogschema.findByIdAndDelete(req.params.id)
         if (blog) {

@@ -7,7 +7,7 @@ import uniqid from "uniqid"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import blogPostRoutes from "./blogPosts/index-mongo.js";
-import authorRoutes from "./Authors/index.js";
+import authorRoutes from "./Authors/index-mongo.js";
 import csvGenerate from "./files/csvGenerate.js";
 import userMail from "./Users/index.js";
 import {

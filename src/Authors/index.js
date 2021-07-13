@@ -1,21 +1,24 @@
-/*
-****************** STUDENTS CRUD ********************
-1. CREATE → POST http://localhost:3001/students (+ body)
-2. READ → GET http://localhost:3001/students (+ optional query parameters)
-3. READ → GET http://localhost:3001/students/:id
-4. UPDATE → PUT http://localhost:3001/students/:id (+ body)
-5. DELETE → DELETE http://localhost:3001/students/:id
-*/
-
 import express from "express";
 import fs from "fs"; // core module to acess  content in the files like READ, Write into the files
 import { fileURLToPath } from "url";
 import { dirname, join, extname } from "path";
 import uniqid from "uniqid";
 import multer from 'multer'
+import { v2 as cloudinary } from "cloudinary"
+import { CloudinaryStorage } from "multer-storage-cloudinary"
 import { authorAvatarPath, setAuthorAvatarUrl, writeAuthorsPictures, } from "../lib/fs-tools.js";
 
 const authorRouter = express.Router();
+
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary, // grab cloudinaryURL feom process.env.Cludinary_URL
+  params: {
+    folder: 'Authors',
+  },
+})
+
+const upload = multer({ storage: cloudinaryStorage }).single('uploadAvatar')
+
 
 const filePath = fileURLToPath(import.meta.url);
 const currentPath = dirname(filePath);
