@@ -45,7 +45,9 @@ export const basicAuthMiddleware = async (req, res, next) => {
             
         }
 
-      next()
+      else{
+          next()
+      }
 
     } else {
       next(createError(401, "Credentials are not correct!"))

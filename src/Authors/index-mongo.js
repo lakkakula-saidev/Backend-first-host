@@ -4,6 +4,7 @@ import AuthorModel from './Schema.js'
 import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import multer from 'multer'
+import { JWTAuthenticate } from '../Auth/tools.js'
 
 import { generatePDFStream } from '../lib/generatePDFStream.js'
 import { pipeline } from 'stream'
@@ -20,6 +21,46 @@ const cloudinaryStorage = new CloudinaryStorage({
 const upload = multer({ storage: cloudinaryStorage }).single('uploadCover')
 
 
+authorRouter.post("/register", async (req, res, next) => {
+    try {
+        const newAuthor = new AuthorModel(req.body)
+
+        const { _id } = await newAuthor.save()
+
+        res.status(201).send({ _id })
+    } catch (error) {
+        next(error)
+    }
+})
+
+authorRouter.post("/login", async (req, res, next) => {
+    try {
+        const { email, password } = req.body
+
+        // 1. Verify author in the database
+
+        const author = await AuthorModel.checkCredentials(email, password)
+
+        console.log(author)
+        if (author) {
+            // 2. If a vaild author found, Genrerate a JWT
+
+            const accessToken = await JWTAuthenticate(author)
+
+            // 3. Send token as a response
+
+            res.send({ accessToken })
+
+        } else {
+            next(createError(401, 'Credentials wrong or Author not found'))
+
+        }
+
+
+    } catch (error) {
+        next(error)
+    }
+})
 
 authorRouter.get('/', async (req, res, next) => {
     try {
@@ -52,27 +93,27 @@ authorRouter.get('/:id', async (req, res, next) => {
     }
 })
 
-authorRouter.post('/',  async (req, res, next) => {
-        try {
-            const newBlog = new AuthorModel(req.body)
-            const { _id } = await newBlog.save()
-            res.status(201).send(_id)
-        } catch (error) {
-            console.log(error)
-            next(createError(500, 'An error occured while posting data'))
-        }
-    })
+authorRouter.post('/', async (req, res, next) => {
+    try {
+        const newBlog = new AuthorModel(req.body)
+        const { _id } = await newBlog.save()
+        res.status(201).send(_id)
+    } catch (error) {
+        console.log(error)
+        next(createError(500, 'An error occured while posting data'))
+    }
+})
 
-authorRouter.put('/:id',  async (req, res, next) => {
+authorRouter.put('/:id', async (req, res, next) => {
 
     let password = req.body.password
-    if(password){
+    if (password) {
         req.body.password = await AuthorModel.updatePassword(req.body.password)
-    } 
+    }
 
     try {
         const blog = await AuthorModel.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true })
-        
+
         if (blog) {
             res.send(blog)
         } else {
