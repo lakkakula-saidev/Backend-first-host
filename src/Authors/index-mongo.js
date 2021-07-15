@@ -5,7 +5,7 @@ import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import multer from 'multer'
 import { JWTAuthenticate } from '../Auth/tools.js'
-
+import passport from 'passport'
 import { generatePDFStream } from '../lib/generatePDFStream.js'
 import { pipeline } from 'stream'
 
@@ -36,6 +36,7 @@ authorRouter.post("/register", async (req, res, next) => {
 authorRouter.post("/login", async (req, res, next) => {
     try {
         const { email, password } = req.body
+        console.log(req.body)
 
         // 1. Verify author in the database
 
@@ -52,13 +53,14 @@ authorRouter.post("/login", async (req, res, next) => {
             res.send({ accessToken })
 
         } else {
-            next(createError(401, 'Credentials wrong or Author not found'))
+            console.log('I am here...')
+            res.status(401).send('Credentials wrong or Author not found')
 
         }
 
 
     } catch (error) {
-        next(error)
+        next(createError(500, error.message))
     }
 })
 
@@ -139,6 +141,19 @@ authorRouter.delete('/:id', async (req, res, next) => {
     }
 })
 
+
+// GOOGLE LOGIN STUFF
+
+authorRouter.get("/googleLogin", passport.authenticate("google", { scope: ["profile", "email"] })) // This endpoint redirects automagically to Google
+
+authorRouter.get("/googleRedirect", passport.authenticate("google"), async (req, res, next) => {
+    try {
+        console.log(req.author)
+        res.send("OK")
+    } catch (error) {
+        next(error)
+    }
+})
 
 
 export default authorRouter
